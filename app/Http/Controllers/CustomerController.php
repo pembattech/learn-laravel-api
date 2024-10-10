@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Http\Resources\V1\CustomerResource;
+use App\Http\Resources\V1\CustomerCollection;
 use App\Models\Customer;
 
 class CustomerController extends Controller
@@ -13,7 +16,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        //
+        // 
     }
 
     /**
@@ -37,7 +40,7 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        //
+        // 
     }
 
     /**

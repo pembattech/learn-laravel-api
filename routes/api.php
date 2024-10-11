@@ -12,9 +12,13 @@ Route::get('/user', function (Request $request) {
 
 
 // api/v1
-Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1'], function() {
-    Route::apiResource('customers', CustomerController::class);
-    Route::apiResource('invoices', InvoiceController::class);
-    
-});
+Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1'], function () {
 
+    // filter_url:
+    //      http://127.0.0.1:8000/api/v1/customers?state[eq]=California
+    //      http://127.0.0.1:8000/api/v1/customers?type[eq]=B&city[eq]=Laurenceshire
+
+    Route::apiResource('customers', CustomerController::class);
+    //      http://127.0.0.1:8000/api/v1/invoices?status[ne]=P
+    Route::apiResource('invoices', InvoiceController::class);
+});

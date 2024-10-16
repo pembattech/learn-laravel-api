@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\V1\CustomerResource;
 use App\Http\Resources\V1\CustomerCollection;
@@ -10,6 +9,7 @@ use App\Models\Customer;
 use App\Http\Controllers\Controller;
 use App\Filters\V1\CustomerFilter;
 use Illuminate\Http\Request;
+use App\Http\Requests\V1\StoreCustomerRequest;
 
 class CustomerController extends Controller
 {
@@ -18,29 +18,19 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        // Instantiate the CustomerFilter class to handle query parameter filtering
         $filter = new CustomerFilter();
 
-        // Use the transform method to convert the request's query parameters
-        // into an array of conditions that can be used in the database query.
-        // Example: If the URL is ?name[eq]=John, the result might be: [['name', '=', 'John']]
-        $queryItems = $filter->transform($request); // [['column', 'operator', 'value']]
+        $FilterItems = $filter->transform($request); // [['column', 'operator', 'value']]
 
-        // Check if there are any filter conditions (query parameters) provided
-        if (count($queryItems) == 0) {
-            // If no query filters are provided, return all customers paginated.
-            // No where() conditions are applied here, it simply returns all customers paginated.
-            return new CustomerCollection(Customer::paginate());
-        } else {
-            // If filters exist, apply them to the Customer query using the where() method
-            // Example: If $queryItems contains [['name', '=', 'John']], it will fetch
-            // customers where the name is 'John' and paginate the results.
-            $customers = Customer::where($queryItems)->paginate();
+        $includeInvoices = $request->query('includeInvoices');
 
-            // Return the paginated result with the original query parameters appended to the pagination links.
-            // This ensures that when navigating between pages, the filters (e.g., ?name[eq]=John) are retained in the URL.
-            return new CustomerCollection($customers->appends($request->query()));
+        $customers = Customer::where($FilterItems);
+
+        if ($includeInvoices) {
+            $customers = $customers->with('invoices');
         }
+
+        return new CustomerCollection($customers->paginate()->appends($request->query()));
     }
 
 
@@ -57,14 +47,18 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        //
+    return new CustomerResource(Customer::create($request->all()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Customer $customer)
+    public function show(Request $request, Customer $customer)
     {
+        $includeInvoices = $request->query('includeInvoices');
+        if ($includeInvoices) {
+            return new CustomerResource($customer->loadMissing('invoices'));
+        }
         return new CustomerResource($customer);
     }
 

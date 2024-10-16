@@ -8,7 +8,6 @@ use App\Filters\ApiFilter;
 class InvoicesFilter extends ApiFilter
 {
 
-
     protected $safeParms = [
         'customerId' => ['eq'],
         'amount' => ['eq', 'lt', 'gt', 'lte', 'gte'],

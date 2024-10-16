@@ -28,3 +28,15 @@ class CustomerResource extends JsonResource
         ];
     }
 }
+
+/*
+Key Features:
+    Transforming Customer Data:
+        The toArray() method transforms the customer data into a clean array format, which is perfect for an API response. Each field, like id, name, type, email, etc., is extracted from the customer model.
+        
+    Conditional Relationships (whenLoaded()):
+        The whenLoaded('invoices') method ensures that the customer's invoices are only included in the response if the invoices relationship has been pre-loaded (via eager loading). This prevents unnecessary queries and keeps the API efficient.
+        
+    Handling Nested Resources:
+        If invoices are included, the InvoiceResource::collection() is used to transform each invoice associated with the customer, ensuring consistency in formatting both the customer and related invoices.
+*/

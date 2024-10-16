@@ -16,20 +16,22 @@ class CustomerFactory extends Factory
      */
     public function definition(): array
     {
+        // Randomly select a type for the customer, either 'I' (Individual) or 'B' (Business)
+        $type = $this->faker->randomElement(['I', 'B']);
+        
+        // If the type is 'I' (Individual), generate a person's name; 
+        // Otherwise, generate a company name for type 'B' (Business)
+        $name = $type === 'I' ? $this->faker->name() : $this->faker->company();
 
-            $type = $this->faker->randomElement(['I', 'B']);
-            $name = $type === 'I' ? $this->faker->name() : $this->faker->company();
-
-
-            return [
-
-                'name' =>  $name,
-                'type' => $type,
-                'email' => $this->faker->email(),
-                'address' =>  $this->faker->streetAddress(),
-                'city' => $this->faker->city(),
-                'state' => $this->faker->state(),
-                'postal_code' => $this->faker->postcode()
-            ];
+        // Return an array of data representing the Customer model's fields
+        return [
+            'name' =>  $name,  // Name of the individual or business
+            'type' => $type,   // 'I' for individual, 'B' for business
+            'email' => $this->faker->email(), // Generate a random email address
+            'address' => $this->faker->streetAddress(), // Generate a random street address
+            'city' => $this->faker->city(), // Generate a random city name
+            'state' => $this->faker->state(), // Generate a random state name
+            'postal_code' => $this->faker->postcode() // Generate a random postal code
+        ];
     }
 }

@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Filters\V1\InvoicesFilter;
-use App\Http\Requests\StoreInvoiceRequest;
-use App\Http\Requests\UpdateInvoiceRequest;
-use App\Http\Resources\V1\InvoiceResource;
-use App\Models\Invoice;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\InvoiceCollection;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use App\Http\Requests\V1\BulkStoreInvoiceRequest;
-
+use App\Filters\V1\InvoicesFilter;                // Filter class for processing query parameters
+use App\Http\Requests\StoreInvoiceRequest;        // Request class for validating invoice creation
+use App\Http\Requests\UpdateInvoiceRequest;       // Request class for validating invoice updates
+use App\Http\Resources\V1\InvoiceResource;       // Resource for transforming a single invoice instance
+use App\Models\Invoice;                           // Invoice model for interacting with the database
+use App\Http\Controllers\Controller;              // Base controller class for Laravel controllers
+use App\Http\Resources\V1\InvoiceCollection;     // Resource for transforming a collection of invoices
+use Illuminate\Http\Request;                      // Request class for handling HTTP requests
+use Illuminate\Support\Arr;                       // Helper class for array manipulation
+use App\Http\Requests\V1\BulkStoreInvoiceRequest; // Request class for validating bulk invoice creation
 
 class InvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * This method retrieves a list of invoices, optionally filtered
+     * by query parameters.
      */
     public function index(Request $request)
     {
@@ -44,34 +46,48 @@ class InvoiceController extends Controller
         }
     }
 
-
     /**
      * Show the form for creating a new resource.
+     * 
+     * This method is typically used for returning a form view in web applications.
+     * In APIs, this might not be needed.
      */
     public function create()
     {
-        //
+        // Not implemented, as API does not usually return views
     }
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * This method is responsible for validating and storing a new invoice.
+     * However, it is currently not implemented.
      */
     public function store(StoreInvoiceRequest $request)
     {
-        //
+        // Not implemented, should include logic to create an invoice using the validated data
     }
 
-    public function bulkStore(BulkStoreInvoiceRequest $request) {
-        $bulk = collect($request->all())->map(function($arr, $key) {
-        return Arr::except($arr, ['customerId', 'billedDate', 'paidDate']);
-    });
+    /**
+     * Store multiple invoices in bulk.
+     * 
+     * This method validates and creates multiple invoices from an array of request data.
+     */
+    public function bulkStore(BulkStoreInvoiceRequest $request)
+    {
+        // Collect the request data, mapping each invoice array to remove unnecessary fields
+        $bulk = collect($request->all())->map(function ($arr, $key) {
+            return Arr::except($arr, ['customerId', 'billedDate', 'paidDate']);
+        });
 
-    Invoice::insert($bulk->toArray());
+        // Insert the bulk data into the invoices table
+        Invoice::insert($bulk->toArray());
     }
-
 
     /**
      * Display the specified resource.
+     * 
+     * This method retrieves a single invoice resource and returns it as a resource.
      */
     public function show(Invoice $invoice)
     {
@@ -80,25 +96,56 @@ class InvoiceController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * 
+     * This method is typically used for returning a form view in web applications.
+     * In APIs, this might not be needed.
      */
     public function edit(Invoice $invoice)
     {
-        //
+        // Not implemented, as API does not usually return views
     }
 
     /**
      * Update the specified resource in storage.
+     * 
+     * This method is responsible for validating and updating an existing invoice.
+     * However, it is currently not implemented.
      */
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        //
+        // Not implemented, should include logic to update the invoice using the validated data
     }
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * This method is responsible for deleting a specified invoice.
+     * However, it is currently not implemented.
      */
     public function destroy(Invoice $invoice)
     {
-        //
+        // Not implemented, should include logic to delete the invoice
     }
 }
+
+
+/**
+ * Key Features Explained:
+
+ * Index Method:
+    * The index() method retrieves a paginated list of invoices.
+    * It utilizes the InvoicesFilter class to transform query parameters into conditions for filtering the invoices.
+    * If no filters are applied, it returns all invoices. If filters exist, they are applied to the query.
+
+ * Bulk Store Method:
+    * The bulkStore() method validates and stores multiple invoices in bulk.
+    * It processes each invoice in the request data, excluding unnecessary fields such as customerId, billedDate, and paidDate.
+    * The processed data is then inserted into the database in one query for efficiency.
+
+ * Show Method:
+    * The show() method retrieves a single invoice resource by its identifier and returns it as a formatted resource.
+
+ * Use of Resources:
+    * The controller uses InvoiceResource and InvoiceCollection to transform the invoice models into a consistent JSON response format for the API.
+
+ */

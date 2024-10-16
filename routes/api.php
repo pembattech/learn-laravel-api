@@ -21,4 +21,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1'], f
     Route::apiResource('customers', CustomerController::class);
     //      http://127.0.0.1:8000/api/v1/invoices?status[ne]=P
     Route::apiResource('invoices', InvoiceController::class);
+
+    Route::post('invoices/bulk', ['uses' => 'InvoiceController@bulkStore']);
 });
